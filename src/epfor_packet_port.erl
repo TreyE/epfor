@@ -18,14 +18,21 @@ init({CmdSpec, OtherArgs}) ->
 	{ok, #state{port = SpawnedPort}}.
 
 terminate(_Reason, State) ->
-	erlang:port_close(State#state.port).
+	case erlang:port_info(State#state.port) of
+		undefined -> ok;
+                _ -> erlang:port_close(State#state.port)
+	end.
 
-handle_info(_Info, State) -> {noreply, State}.
+handle_info(Info, State) -> 
+	case Info of
+		{Port,{exit_status,EStatus}} -> {stop, {port_exit, Port, EStatus}, State};
+		_ -> {stop, {message_not_understood, Info}, State}
+	end.
 
 handle_call(Request, _From, State) -> 
-	case catch(call_port(State#state.port, Request)) of
-          {ok, Data} -> {reply, Data, State};
-	  timeout -> {stop, timeout, State}
+	case catch(call_port(State, Request)) of
+		{ok, Data} -> {reply, Data, State};
+		timeout -> {stop, timeout, State}
 	end.
 
 handle_cast(_, State) -> {noreply, State}.
