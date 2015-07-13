@@ -1,0 +1,15 @@
+{application, epfor,
+ [
+  {description, "Erlang Port For Ruby"},
+  {vsn, "0.1.0"},
+  {modules, [
+             epfor,
+             epfor_packet_port
+            ]},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {env, []}
+ ]}.
