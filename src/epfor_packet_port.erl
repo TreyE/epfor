@@ -1,9 +1,11 @@
 -module(epfor_packet_port).
 
--export([init/1, terminate/2, handle_info/2, handle_call/3, handle_cast/2, code_change/3, start_link/3, send_command/2]).
+-export([init/1, terminate/2, handle_info/2, handle_call/3, handle_cast/2, code_change/3, start_link/3, send_command/2, start_pid_link/2]).
 -behaviour(gen_server).
 
 -record(state, {port, timeout=5000}).
+
+start_pid_link(CmdSpec, OtherArgs) -> gen_server:start_link(?MODULE, {CmdSpec, OtherArgs}, []).
 
 start_link(NameSpec, CmdSpec, OtherArgs) ->
   gen_server:start_link(NameSpec, ?MODULE, {CmdSpec, OtherArgs}, []).
